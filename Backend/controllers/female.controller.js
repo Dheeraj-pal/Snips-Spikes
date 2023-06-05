@@ -3,81 +3,87 @@ const { FemaleModel } = require("../model/female.model");
 
 
 // --------->>>> GET <<<<<---------
-const FemaleGetData = async (req, res) => {
-    try {
-        const data = await FemaleModel.find()
-        res.status(200).send(data);
-    } catch (error) {
-        res.status(404).send({
-            Message: "Bad request 404",
-        });
-    }
-}
+const femaleGetData = async (req, res) => {
+  try {
+    const data = await FemaleModel.find();
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(500).send({
+      error: "Internal Server Error",
+    });
+  }
+};
 
 
 // --------->>>> POST <<<<<---------
-const FemalePostData = async (req, res) => {
+const femalePostData = async (req, res) => {
+  try {
     const payload = req.body;
-    try {
-        const data = new FemaleModel(payload);
-        await data.save();
-        res.status(200).send({
-            Message: "Data saved successfully",
-        });
-    } catch (error) {
-        res.status(404).send({
-            Message: "Bad request 404",
-        });
-    }
-}
+    const data = new FemaleModel(payload);
+    await data.save();
+    res.status(201).send({
+      success: true,
+      message: "Data saved successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      error: "Bad request",
+    });
+  }
+};
 
 // --------->>>> PATCH <<<<<---------
-const FemalePatchData = async (req, res) => {
-    const ID = req.params.id;
-    const payload = req.body
-    try {
-        await FemaleModel.findByIdAndUpdate({ _id: ID }, payload)
-        res.status(200).send({
-            Message: "Data successfully modified",
-        });
-    }
-    catch (error) {
-        res.status(404).send({
-            Message: "Bad request 404",
-        });
-    }
-}
+const femalePatchData = async (req, res) => {
+  try {
+    const { ID } = req.params;
+    const payload = req.body;
+    await FemaleModel.findByIdAndUpdate({ _id: ID }, payload);
+    res.status(200).send({
+      success: true,
+      message: "Data successfully modified",
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      error: "Bad request",
+    });
+  }
+};
 
 // --->>>> GET <<<<<---  ||  --->>>> GetSingle Service <<<<<---
 const GetFemaleSingleData = async (req, res) => {
-    const ID = req.params.id;
-    const payload = req.body
     try {
+        const ID = req.params.id;
         const data = await FemaleModel.findById({ _id: ID })
         res.status(200).send({
-            data
+           success: true,
+           data,
         });
     }
     catch (error) {
-        res.status(404).send({
-            Message: "Bad request 404",
-        });
+      res.status(404).send({
+      success: false,
+      error: "Data not found",
+    });
     }
 }
 
 // --------->>>> DELETE <<<<<---------
 const FemaleDeleteData = async (req, res) => {
-    const ID = req.params.id;
     try {
+        const ID = req.params.id;
         await FemaleModel.findByIdAndDelete({ _id: ID })
-        res.status(200).send({
-            Message: "Data successfully deleted",
+        res.status(204).send({
+            success: true,
+            message: "Data successfully deleted",
         });
     }
     catch (error) {
-        res.status(404).send({
-            Message: "Bad request 404",
-        });
+      res.status(404).send({
+        success: false,
+        error: "Data not found",
+      });
     }
 }
 
